@@ -1,0 +1,16 @@
+.my-image {float: right; width: 500px; height: auto;}
+body {background-color: rgb(236, 206, 239);
+color: rgb(72, 71, 71);}
+#top {text-decoration: underline;
+text-align: center;
+font-size: 40px;}
+.Most {text-decoration: underline;
+font-weight: bold;}
+.p {font-family: 'Arial', sans-serif;
+font-size: 18px;}
+.blue {color: rgb(77, 77, 188);
+font-family: 'Courier New', Courier, monospace;}
+.end {text-align: center;
+font-size: 30px;
+font-weight: bold;
+font-style: italic;}

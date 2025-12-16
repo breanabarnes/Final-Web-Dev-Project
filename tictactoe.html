@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Purple Tic Tac Toe (vs AI)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #5e2b97, #9b5de5);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    .game-container {
+      background: #f6edff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 320px;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #5e2b97;
+    }
+
+    .status {
+      margin: 15px 0;
+      font-size: 1.1rem;
+      color: #6a1bb1;
+      font-weight: bold;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .cell {
+      width: 90px;
+      height: 90px;
+      background: #e5d4ff;
+      border-radius: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .cell:hover {
+      background: #d1b3ff;
+      transform: scale(1.05);
+    }
+
+    .cell.x { color: #5e2b97; }
+    .cell.o { color: #9b5de5; }
+
+    button {
+      background: linear-gradient(135deg, #7b2cbf, #9b5de5);
+      border: none;
+      border-radius: 20px;
+      padding: 10px 24px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>💜 Tic Tac Toe 💜</h1>
+    <div class="status" id="status">Your turn</div>
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <button id="restart">Restart</button>
+  </div>
+
+  <script>
+    const cells = document.querySelectorAll('.cell');
+    const statusEl = document.getElementById('status');
+    const restartBtn = document.getElementById('restart');
+
+    let board = Array(9).fill(null);
+    let gameActive = true;
+
+    const HUMAN = 'X';
+    const AI = 'O';
+
+    const winPatterns = [
+      [0,1,2], [3,4,5], [6,7,8],
+      [0,3,6], [1,4,7], [2,5,8],
+      [0,4,8], [2,4,6]
+    ];
+
+    function handleClick(e) {
+      const index = e.target.dataset.index;
+      if (!gameActive || board[index]) return;
+
+      makeMove(index, HUMAN);
+
+      if (gameActive) {
+        statusEl.textContent = 'AI thinking...';
+        setTimeout(aiMove, 500);
+      }
+    }
+
+    function makeMove(index, player) {
+      board[index] = player;
+      cells[index].textContent = player;
+      cells[index].classList.add(player.toLowerCase());
+
+      if (checkWin(player)) {
+        statusEl.textContent = player === HUMAN ? 'You win! 💜' : 'AI wins! 🤖';
+        gameActive = false;
+        return;
+      }
+
+      if (board.every(cell => cell !== null)) {
+        statusEl.textContent = "It's a draw!";
+        gameActive = false;
+        return;
+      }
+
+      statusEl.textContent = player === HUMAN ? 'AI thinking...' : 'Your turn';
+    }
+
+    function aiMove() {
+      if (!gameActive) return;
+
+      let move = findWinningMove(AI) ?? findWinningMove(HUMAN);
+
+      if (move === null) {
+        const empty = board
+          .map((v, i) => v === null ? i : null)
+          .filter(v => v !== null);
+        move = empty[Math.floor(Math.random() * empty.length)];
+      }
+
+      makeMove(move, AI);
+    }
+
+    function findWinningMove(player) {
+      for (let pattern of winPatterns) {
+        const values = pattern.map(i => board[i]);
+        if (values.filter(v => v === player).length === 2 && values.includes(null)) {
+          return pattern[values.indexOf(null)];
+        }
+      }
+      return null;
+    }
+
+    function checkWin(player) {
+      return winPatterns.some(pattern => pattern.every(i => board[i] === player));
+    }
+
+    function restartGame() {
+      board = Array(9).fill(null);
+      gameActive = true;
+      statusEl.textContent = 'Your turn';
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('x', 'o');
+      });
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleClick));
+    restartBtn.addEventListener('click', restartGame);
+  </script>
+<a class = "game" href="scratchpage.html">Back to Scratch Page</a>
+
+
+</body>
+</html>
